@@ -336,6 +336,14 @@ bool ConsoleKitProvider::canAction(Power::Action action) const
         command = "CanStop";
         break;
 
+    case Power::PowerHibernate:
+        command = "CanHibernate";
+         break;
+
+    case Power::PowerSuspend:
+        command = "CanSuspend";
+         break;
+
     default:
         return false;
     }
@@ -366,6 +374,14 @@ bool ConsoleKitProvider::doAction(Power::Action action)
     case Power::PowerShutdown:
         command = "Stop";
         break;
+
+    case Power::PowerHibernate:
+        command = "Hibernate";
+         break;
+
+    case Power::PowerSuspend:
+        command = "Suspend";
+         break;
 
     default:
         return false;
