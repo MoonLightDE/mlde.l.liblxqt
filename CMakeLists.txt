@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.9)
+cmake_minimum_required(VERSION 2.8.11)
 
 project(liblxqt)
 
@@ -13,6 +13,7 @@ set(LXQT_PKG_CONFIG_DESCRIPTION "Shared library for LXQt applications")
 set(PUB_HDRS
     aboutdialog/lxqtaboutdialog.h
     addplugindialog/lxqtaddplugindialog.h
+    lxqthtmldelegate.h
     lxqtsettings.h
     lxqtxfitman.h
     lxqtplugininfo.h
@@ -35,6 +36,7 @@ set(PUB_HDRS
 
 set(PUBLIC_CLASSES
     AboutDialog
+    HtmlDelegate
     Settings
     XfitMan
     PluginInfo
@@ -65,6 +67,7 @@ set(SRCS
     aboutdialog/lxqtaboutdialog.cpp
     aboutdialog/technicalinfo.cpp
     lxqtxfitman.cpp
+    lxqthtmldelegate.cpp
     lxqtplugininfo.cpp
     lxqtpowermanager.cpp
     addplugindialog/lxqtaddplugindialog.cpp
@@ -90,6 +93,7 @@ set(MOCS
     aboutdialog/lxqtaboutdialog.h
     aboutdialog/lxqtaboutdialog_p.h
     addplugindialog/lxqtaddplugindialog.h
+    lxqthtmldelegate.h
     lxqtpowermanager.h
     lxqtsettings.h
     lxqtscreensaver.h
@@ -112,13 +116,11 @@ set(FORMS
     addplugindialog/lxqtaddplugindialog.ui
 )
 
-set(TRANSLATION_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/translations/source.ts")
-file(GLOB TS_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/translations/liblxqt_*.ts"
-)
-
 # additional cmake files
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules
+)
 
 option(UPDATE_TRANSLATIONS "Update source translation translations/*.ts files" OFF)
 
@@ -131,19 +133,11 @@ find_package(Qt5DBus REQUIRED QUIET)
 find_package(Qt5X11Extras REQUIRED QUIET)
 find_package(Qt5LinguistTools REQUIRED QUIET)
 find_package(Qt5Xdg REQUIRED)
+find_package(X11 REQUIRED)
 message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
 
 QT5_WRAP_UI(UIS ${FORMS})
-if (UPDATE_TRANSLATIONS)
-    qt5_create_translation(QM_FILES ${SRCS} ${FORMS} ${TS_FILES} OPTIONS -locations absolute)
-    qt5_create_translation(TS_SOURCE_FILE
-        ${SRCS} ${FORMS}
-        ${TRANSLATION_TEMPLATE}
-        OPTIONS -locations absolute
-    )
-else()
-    QT5_ADD_TRANSLATION(QM_FILES ${TS_FILES})
-endif()
+
 QT5_ADD_DBUS_INTERFACE(SRCS
     dbus/org.freedesktop.Notifications.xml
     notifications_interface
@@ -151,18 +145,8 @@ QT5_ADD_DBUS_INTERFACE(SRCS
 
 set(LXQT_QT_VERSION "5")
 set(LXQT_QT_VERSION_SUFFIX "-qt5")
-set(LXQT_PKG_CONFIG_REQUIRES "Qt5Widgets Qt5Xml Qt5DBus Qt5X11Extras")
+set(LXQT_PKG_CONFIG_REQUIRES "Qt5Xdg Qt5Widgets Qt5Xml Qt5DBus Qt5X11Extras")
 
-include(${QTXDG_USE_FILE})
-
-find_package(X11 REQUIRED QUIET)
-
-include_directories(
-    "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_CURRENT_BINARY_DIR}"
-    "${X11_INCLUDE_DIR}"
-    "${QTXDG_INCLUDE_DIRS}"
-)
 
 # Standard directories for installation
 include(GNUInstallDirs)
@@ -182,6 +166,19 @@ set(LXQT_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/share/cmake")
 
 include(cmake/FindInstallConfigPath.cmake)
 include(create_portable_headers)
+
+## Translations
+include(LXQtTranslateTs)
+
+lxqt_translate_ts(QM_FILES
+    UPDATE_TRANSLATIONS
+        ${UPDATE_TRANSLATIONS}
+    SOURCES
+        ${SRCS}
+        ${FORMS}
+    INSTALL_DIR
+        ${LXQT_TRANSLATIONS_DIR}/${PROJECT_NAME}
+)
 
 message(STATUS "")
 message(STATUS "liblxqt version: ${LXQT_VERSION}")
@@ -288,15 +285,16 @@ add_library(${LXQT_LIBRARY_NAME}
            ${dbus_generated}
            ${UIS} ${MOCS}
            ${QM_FILES}
-           ${TS_SOURCE_FILE}
            ${QRC_CXX_SOURCES}
 
 )
 
-qt5_use_modules(${LXQT_LIBRARY_NAME} Widgets DBus X11Extras)
 target_link_libraries(${LXQT_LIBRARY_NAME}
-    ${X11_X11_LIB}
-    ${QTXDG_LIBRARIES}
+    Qt5::Widgets
+    Qt5::DBus
+    Qt5::X11Extras
+    Qt5Xdg
+    X11
 )
 
 set_target_properties(${LXQT_LIBRARY_NAME} PROPERTIES
@@ -316,7 +314,6 @@ export(TARGETS ${LXQT_LIBRARY_NAME} ${QTXDG_TARGET} FILE ${LXQT_INTREE_TARGETS_F
 
 install(FILES ${PUB_HDRS} DESTINATION "${LXQT_INSTALL_INCLUDE_DIR}/LXQt")
 install(FILES ${INTREE_PORTABLE_HEADERS} DESTINATION "${LXQT_INSTALL_INCLUDE_DIR}/LXQt")
-install(FILES ${QM_FILES} DESTINATION "${LXQT_TRANSLATIONS_DIR}/liblxqt")
 
 #************************************************
 # Create pkgconfig file
