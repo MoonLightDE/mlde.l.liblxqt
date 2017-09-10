@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2012-2013 Razor team
@@ -28,26 +28,27 @@
 #ifndef LXQTAPPLICATION_H
 #define LXQTAPPLICATION_H
 
-#include <QtGui/QApplication>
-#include <QtGui/QProxyStyle>
+#include <QApplication>
+#include <QProxyStyle>
+#include "lxqtglobals.h"
 
 namespace LxQt
 {
 
-/*! \brief Razor-qt wrapper around QApplication.
- * It loads various Razor-qt related stuff by default (window icon, icon theme...)
+/*! \brief LXQt wrapper around QApplication.
+ * It loads various LXQt related stuff by default (window icon, icon theme...)
  *
- * \note This wrapper is intended to be used only inside Razor-qt project. Using it
+ * \note This wrapper is intended to be used only inside LXQt project. Using it
  *       in external application will automatically require linking to various
- *       Razor-qt libraries.
+ *       LXQt libraries.
  *
  */
-class Application : public QApplication
+class LXQT_API Application : public QApplication
 {
     Q_OBJECT
 
 public:
-    /*! Construct a Razor-qt application object.
+    /*! Construct a LXQt application object.
      * \param argc standard argc as in QApplication
      * \param argv standard argv as in QApplication
      */

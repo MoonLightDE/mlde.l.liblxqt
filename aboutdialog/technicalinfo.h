@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2012 Razor team
@@ -29,8 +29,8 @@
 #ifndef TECHNICALINFO_H
 #define TECHNICALINFO_H
 
-#include <QtCore/QList>
-#include <QtCore/QPair>
+#include <QList>
+#include <QPair>
 #include <QDateTime>
 #include <QVariant>
 

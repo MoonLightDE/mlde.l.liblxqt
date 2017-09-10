@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -29,10 +29,12 @@
 #ifndef LXQTXFITMAN_H
 #define LXQTXFITMAN_H
 
-#include <QtCore/QList>
-#include <QtGui/QPixmap>
-#include <QtCore/QString>
-#include <QtCore/QMap>
+#include "lxqtglobals.h"
+#include <QList>
+#include <QPixmap>
+#include <QString>
+#include <QMap>
+#include <QIcon>
 #include <X11/Xlib.h>
 
 //some net_wm state-operations we need here
@@ -90,11 +92,27 @@ struct WindowState
     bool Attention;     // indicates that some action in or with the window happened.
 };
 
+// A list of hints to the window manager
+// http://tronche.com/gui/x/xlib/ICC/client-to-window-manager/wm-hints.html
+enum WMHintsFlag
+{
+    WMInputHint = (1L << 0),
+    WMStateHint = (1L << 1),
+    WMIconPixmapHint = (1L << 2),
+    WMIconWindowHint = (1L << 3),
+    WMIconPositionHint = (1L << 4),
+    WMIconMaskHint = (1L << 5),
+    WMWindowGroupHint = (1L << 6),
+    WMAllHints = (WMInputHint | WMStateHint | WMIconPixmapHint | WMIconWindowHint
+        | WMIconPositionHint | WMIconMaskHint | WMWindowGroupHint),
+    WMUrgencyHint = (1L << 8)
+};
+typedef long WMHintsFlags;
 
 /**
  * @brief manages the Xlib apicalls
  */
-class XfitMan
+class LXQT_API XfitMan
 {
 public:
 
@@ -110,6 +128,13 @@ public:
         MaximizeHoriz,
         MaximizeVert,
         MaximizeBoth
+    };
+
+    enum WMState
+    {
+        WMStateWithdrawn = 0,
+        WMStateNormal = 1,
+        WMStateIconic = 3
     };
 
     ~XfitMan();
@@ -149,6 +174,21 @@ public:
     Window getActiveAppWindow() const;
     Window getActiveWindow() const;
     int getNumDesktop() const;
+
+    bool getShowingDesktop() const;
+    void setShowingDesktop(bool show) const;
+
+    void setIconGeometry(Window _wid, QRect* rect = 0) const;
+
+    /*!
+     * Returns ICCCM WM_STATE
+    */
+    WMState getWMState(Window _wid) const;
+
+    /*!
+     * Returns the window's hints' flags
+     */
+    WMHintsFlags getWMHintsFlags(Window _wid) const;
 
     /*!
      * Returns the names of all virtual desktops. This is a list of UTF-8 encoding strings.
@@ -237,7 +277,7 @@ private:
 };
 
 
-const XfitMan& xfitMan();
+LXQT_API const XfitMan& xfitMan();
 
 } //namespace LxQt
 #endif // LXQTXFITMAN_H

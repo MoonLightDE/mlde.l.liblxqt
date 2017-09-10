@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright (C) 2012  Alec Moskvin <alecm@gmx.com>
@@ -25,7 +25,8 @@
 #ifndef LXQTNOTIFICATION_H
 #define LXQTNOTIFICATION_H
 
-#include <QtCore/QStringList>
+#include <QStringList>
+#include "lxqtglobals.h"
 
 namespace LxQt
 {
@@ -37,7 +38,7 @@ class NotificationPrivate;
  *
  * Spec: http://developer.gnome.org/notification-spec
  */
-class Notification : public QObject
+class LXQT_API Notification : public QObject
 {
     Q_OBJECT
 public:
@@ -71,7 +72,7 @@ public:
     {
         //! The product name of the server.
         QString name;
-        //! The vendor name. For example, "razor-qt.org"
+        //! The vendor name. For example, "lxde-qt.org"
         QString vendor;
         //! The server's version number.
         QString version;

@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright (C) 2012  Alec Moskvin <alecm@gmx.com>
@@ -23,9 +23,10 @@
  * END_COMMON_COPYRIGHT_HEADER */
 
 #include "lxqtautostartentry.h"
-#include <qtxdg/xdgautostart.h>
-#include <qtxdg/xdgdirs.h>
-#include <QtCore/QFileInfo>
+#include <QFileInfo>
+
+#include <XdgAutoStart>
+#include <XdgDirs>
 
 using namespace LxQt;
 

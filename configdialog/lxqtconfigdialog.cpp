@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright (C) 2012  Alec Moskvin <alecm@gmx.com>
@@ -25,8 +25,8 @@
 #include "lxqtconfigdialog.h"
 #include "ui_lxqtconfigdialog.h"
 
-#include <qtxdg/xdgicon.h>
-#include <QtGui/QPushButton>
+#include <XdgIcon>
+#include <QPushButton>
 
 using namespace LxQt;
 

@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -29,8 +29,9 @@
 #ifndef LXQTPOWER_H
 #define LXQTPOWER_H
 
-#include <QtCore/QObject>
-#include <QtCore/QList>
+#include <QObject>
+#include <QList>
+#include "lxqtglobals.h"
 
 namespace LxQt
 {
@@ -42,7 +43,7 @@ class PowerProvider;
     It allows logout from the user session, hibernate, reboot, shutdown and suspend computer.
     This is a wrapper class. All the real work is done in the PowerWorker classes.
 */
-class Power : public QObject
+class LXQT_API Power : public QObject
 {
     Q_OBJECT
 public:

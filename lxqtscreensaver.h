@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -28,17 +28,17 @@
 #ifndef SCREENSAVER_H
 #define SCREENSAVER_H
 
-#include <QtCore/QProcess>
-#include <QtCore/QObject>
-#include <QtGui/QAction>
-
+#include <QProcess>
+#include <QObject>
+#include "lxqtglobals.h"
+#include <QAction>
 
 class QProcess;
 
 namespace LxQt
 {
 
-class ScreenSaver : public QObject
+class LXQT_API ScreenSaver : public QObject
 {
     Q_OBJECT
 

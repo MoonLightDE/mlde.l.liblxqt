@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -29,11 +29,13 @@
 #ifndef LXQTPAGESELECTWIDGET_H
 #define LXQTPAGESELECTWIDGET_H
 
-#include <QtGui/QListWidget>
+#include "lxqtglobals.h"
+#include <QListWidget>
+
 namespace LxQt
 {
 
-class PageSelectWidget : public QListWidget
+class LXQT_API PageSelectWidget : public QListWidget
 {
     Q_OBJECT
 public:

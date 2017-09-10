@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright (C) 2012  Alec Moskvin <alecm@gmx.com>
@@ -24,7 +24,7 @@
 
 #include "lxqtnotification.h"
 #include "lxqtnotification_p.h"
-#include <QtGui/QMessageBox>
+#include <QMessageBox>
 #include <QDebug>
 
 using namespace LxQt;

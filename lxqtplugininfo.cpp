@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -27,11 +27,11 @@
 
 
 #include "lxqtplugininfo.h"
-#include <QtCore/QObject>
-#include <QtCore/QFileInfo>
-#include <QtCore/QDir>
-#include <QtCore/QTranslator>
-#include <QtCore/QCoreApplication>
+#include <QObject>
+#include <QFileInfo>
+#include <QDir>
+#include <QTranslator>
+#include <QCoreApplication>
 #include <QLibrary>
 #include <QDebug>
 
@@ -75,7 +75,7 @@ QLibrary* PluginInfo::loadLibrary(const QString& libDir) const
     QString baseName, path;
     QFileInfo fi = QFileInfo(fileName());
     path = fi.canonicalPath();
-    baseName = value("X-Razor-Library", fi.completeBaseName()).toString();
+    baseName = value("X-LxQt-Library", fi.completeBaseName()).toString();
 
     QString soPath = QDir(libDir).filePath(QString("lib%2.so").arg(baseName));
     QLibrary* library = new QLibrary(soPath);

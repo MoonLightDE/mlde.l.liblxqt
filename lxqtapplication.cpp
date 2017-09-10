@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2012-2013 Razor team
@@ -25,13 +25,13 @@
  *
  * END_COMMON_COPYRIGHT_HEADER */
 
-#include <QtCore/QDir>
-
-#include <qtxdg/xdgicon.h>
-#include <qtxdg/xdgdirs.h>
+#include <QDir>
 
 #include "lxqtapplication.h"
 #include "lxqtsettings.h"
+
+#include <XdgIcon>
+#include <XdgDirs>
 
 using namespace LxQt;
 
@@ -49,11 +49,13 @@ using namespace LxQt;
 #include <QDateTime>
 /*! \brief Log qDebug input to file
 Used only in pure Debug builds or when is the system environment
-variable RAZOR_DEBUG set
+variable LXQT_DEBUG set
 */
-void dbgMessageOutput(QtMsgType type, const char *msg)
+void dbgMessageOutput(QtMsgType type, const QMessageLogContext &ctx, const QString & msgStr)
 {
-    QDir dir(XdgDirs::configHome().toUtf8() + "/razor");
+    QByteArray msgBuf = msgStr.toUtf8();
+    const char* msg = msgBuf.constData();
+    QDir dir(XdgDirs::configHome().toUtf8() + "/lxqt");
     dir.mkpath(".");
 
     const char* typestr;
@@ -94,15 +96,15 @@ Application::Application(int &argc, char** argv)
     : QApplication(argc, argv)
 {
 #ifdef DEBUG
-    qInstallMsgHandler(dbgMessageOutput);
+    qInstallMessageHandler(dbgMessageOutput);
 #else
-    if (!qgetenv("RAZOR_DEBUG").isNull())
-        qInstallMsgHandler(dbgMessageOutput);
+    if (!qgetenv("LXQT_DEBUG").isNull())
+        qInstallMessageHandler(dbgMessageOutput);
 #endif
 
     XdgIcon::setThemeName(Settings::globalSettings()->value("icon_theme").toString());
-    setWindowIcon(QIcon(QString(LXQT_SHARE_DIR) + "/graphics/razor_logo.png"));
-    connect(Settings::globalSettings(), SIGNAL(razorThemeChanged()), this, SLOT(updateTheme()));
+    setWindowIcon(QIcon(QString(LXQT_SHARE_DIR) + "/graphics/lxqt_logo.png"));
+    connect(Settings::globalSettings(), SIGNAL(lxqtThemeChanged()), this, SLOT(updateTheme()));
     updateTheme();
 }
 
@@ -110,6 +112,6 @@ Application::Application(int &argc, char** argv)
 void Application::updateTheme()
 {
     QString styleSheetKey = QFileInfo(applicationFilePath()).fileName();
-    setStyleSheet(razorTheme.qss(styleSheetKey));
+    setStyleSheet(lxqtTheme.qss(styleSheetKey));
     emit themeChanged();
 }

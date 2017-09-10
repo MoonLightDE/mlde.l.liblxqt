@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright (C) 2013  Alec Moskvin <alecm@gmx.com>
@@ -25,7 +25,9 @@
 #ifndef LXQTPROGRAMFINDER_H
 #define LXQTPROGRAMFINDER_H
 
-#include <QtCore/QStringList>
+#include <QStringList>
+#include "lxqtglobals.h"
+
 namespace LxQt
 {
 
@@ -37,7 +39,7 @@ namespace ProgramFinder
      * \param command
      * \return True if the program exists
      */
-    bool programExists(const QString& command);
+    LXQT_API bool programExists(const QString& command);
 
     /*!
      * \brief findPrograms Filters a list of commands (with arguments) based on
@@ -45,14 +47,14 @@ namespace ProgramFinder
      * \param commands Commands to check
      * \return List of commands which are installed
      */
-    QStringList findPrograms(const QStringList& commands);
+    LXQT_API QStringList findPrograms(const QStringList& commands);
 
     /*!
      * \brief programName Returns the program name given a command
      * \param command
      * \return
      */
-    QString programName(const QString& command);
+    LXQT_API QString programName(const QString& command);
 }
 
 } // namespace LxQt

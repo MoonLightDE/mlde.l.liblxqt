@@ -8,6 +8,8 @@
 #
 #  LXQT_INCLUDE_DIRS  - The lxqt and the Qt include directory, for use with INCLUDE_DIRECTORIES()
 #
+#  LXQT_LIBRARY_DIRS  - The lxqt and the Qt library directories
+#
 #  LXQT_LIBRARIES     - The libraries needed to use lxqt
 #
 #  LXQT_SHARE_DIR     - This allows to install and read the configs from non-standard locations
@@ -15,7 +17,7 @@
 #  LXQT_TRANSLATIONS_DIR - The default translations directory
 #
 #  LXQT_ETC_XDG_DIR   - XDG standards expects system-wide configuration files in the
-#                        /etc/xdg/razor location. Unfortunately QSettings we are using internally
+#                        /etc/xdg/lxqt location. Unfortunately QSettings we are using internally
 #                        can be overriden in the Qt compilation time to use different path for
 #                        system-wide configs. (for example configure ... -sysconfdir /etc/settings ...)
 #                        This path can be found calling Qt4's qmake:
@@ -37,13 +39,13 @@
 #   find_package(LXQT REQUIRED)
 #   include(${LXQT_USE_FILE})
 #
-#   razor_translate_ts(QM_FILES
+#   lxqt_translate_ts(QM_FILES
 #     SOURCES
 #        ${H_FILES}
 #        ${CPP_FILES}
 #        ${UI_FILES}
 #   )
-#   razor_translate_desktop(DESKTOP_FILES
+#   lxqt_translate_desktop(DESKTOP_FILES
 #     SOURCES
 #        ${DESKTOP_FILES_IN}
 #  )
@@ -51,50 +53,25 @@
 #   add_executable(myexe main.cpp)
 #   target_link_libraries(myexe $LXQT_LIBRARIES})
 
-set(LXQT_MAJOR_VERSION @LXQT_MAJOR_VERSION@)
-set(LXQT_MINOR_VERSION @LXQT_MINOR_VERSION@)
-set(LXQT_PATCH_VERSION @LXQT_PATCH_VERSION@)
-set(LXQT_VERSION       @LXQT_VERSION@)
+option(USE_QT5 "Build with Qt5." $ENV{USE_QT5})
 
-set(LXQT_SHARE_DIR     @LXQT_SHARE_DIR@)
-set(LXQT_TRANSLATIONS_DIR @LXQT_TRANSLATIONS_DIR@)
-set(LXQT_ETC_XDG_DIR   @LXQT_ETC_XDG_DIR@)
-set(LXQT_INCLUDE_DIR   @LXQT_INCLUDE_DIR@)
-set(LXQT_LIBRARY       lxqt)
+if(LXQT_FIND_REQUIRED)
+  set(REQUIRED_OPT "REQUIRED")
+endif()
 
+set(LXQT_LIBRARY_DIRS  @CMAKE_INSTALL_PREFIX@/@LIB_INSTALL_DIR@)
 set(LXQT_LIBRARIES     ${LXQT_LIBRARY} )
-set(LXQT_INCLUDE_DIRS  ${LXQT_INCLUDE_DIR} )
+set(LXQT_INCLUDE_DIRS  ${LXQT_INCLUDE_DIR} @CMAKE_INSTALL_PREFIX@/include)
 set(LXQT_USE_FILE      ${CMAKE_CURRENT_LIST_DIR}/lxqt_use.cmake)
+set(LXQT_CMAKE_MODULES_DIR @CFG_LXQT_CMAKE_MODULES_DIR@)
 set(LXQT_FOUND         1)
 
-# for backward compatability ----->
-#set(RAZOR_SHARE_DIR     ${})
-#set(RAZOR_ETC_XDG_DIR   ${})
-#set(RAZOR_INCLUDE_DIR   ${LXQT_INCLUDE_DIR})
-#set(RAZOR_INCLUDE_DIRS  ${LXQT_INCLUDE_DIRS})
-#set(RAZOR_LIBRARY       ${LXQT_LIBRARY})
-# for backward compatability <-----
+if(LXQT_FIND_QUIETLY)
+  set(QUIET_OPT "QUIET")
+endif()
 
-mark_as_advanced(LXQT_LIBRARY LXQT_INCLUDE_DIR)
-
-
-#************************************************
-# RAZOR_USE_MOUNT
-#
-#if (RAZOR_USE_MOUNT)
-#    include(${CMAKE_CURRENT_LIST_DIR}/razormount-config.cmake)
-#    set(RAZOR_INCLUDE_DIRS       ${RAZOR_INCLUDE_DIRS} ${RAZORMOUNT_INCLUDE_DIR})
-#    set(RAZOR_LIBRARIES          ${RAZOR_LIBRARIES}    ${RAZORMOUNT_LIBRARY})
-
-#endif(RAZOR_USE_MOUNT)
-
-
-#************************************************
-# RAZOR_USE_GLOBALKEYCLIENT
-#
-#if (RAZOR_USE_GLOBALKEYCLIENT)
-#    include(${CMAKE_CURRENT_LIST_DIR}/razorglobalkeyclient-config.cmake)
-#    set(RAZOR_INCLUDE_DIRS       ${RAZOR_INCLUDE_DIRS} ${RAZORGLOBALKEYCLIENT_INCLUDE_DIR})
-#    set(RAZOR_LIBRARIES          ${RAZOR_LIBRARIES}    ${RAZORGLOBALKEYCLIENT_LIBRARIES})
-
-#endif(RAZOR_USE_GLOBALKEYCLIENT)
+if(USE_QT5)
+  find_package(LxQt5 ${REQUIRED_OPT} ${QUIET_OPT})
+else()
+  find_package(LxQt4 ${REQUIRED_OPT} ${QUIET_OPT})
+endif()

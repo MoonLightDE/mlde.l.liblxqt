@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2012 Razor team
@@ -29,8 +29,10 @@
 #ifndef LXQTGRIDLAYOUT_H
 #define LXQTGRIDLAYOUT_H
 
-#include <QtGui/QLayout>
-#include <QtCore/QList>
+#include <QList>
+#include "lxqtglobals.h"
+#include <QLayout>
+
 
 namespace LxQt
 {
@@ -40,7 +42,7 @@ class GridLayoutPrivate;
 /**
  The GridLayout class lays out widgets in a grid.
  **/
-class GridLayout: public QLayout
+class LXQT_API GridLayout: public QLayout
 {
     Q_OBJECT
 public:

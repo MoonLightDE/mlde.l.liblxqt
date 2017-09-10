@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2012 Razor team
@@ -27,9 +27,9 @@
 
 
 #include "lxqtgridlayout.h"
-#include <QtGui/QWidget>
-#include <QtCore/QDebug>
+#include <QDebug>
 #include <math.h>
+#include <QWidget>
 
 using namespace LxQt;
 
@@ -596,7 +596,7 @@ void GridLayout::setGeometry(const QRect &geometry)
             {
                 y = geometry.top();
                 if (d->mStretch.testFlag(StretchHorizontal))
-                    x += geometry.width() / d->rows();
+                    x += geometry.width() / d->cols();
                 else
                     x += itemWidth;
 

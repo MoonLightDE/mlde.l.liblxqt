@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -29,6 +29,7 @@
 #define LXQTRABOUTDIALOG_H
 
 #include <QDialog>
+#include "lxqtglobals.h"
 
 namespace LxQt
 {
@@ -38,7 +39,7 @@ class AboutDialogPrivate;
 /**
  * @brief displays a simple about dialog
  */
-class AboutDialog: public QDialog
+class LXQT_API AboutDialog: public QDialog
 {
     Q_OBJECT
 public:

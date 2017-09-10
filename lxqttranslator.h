@@ -1,12 +1,13 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
- * Copyright: 2013 LXDE-Qt team
+ * Copyright: 2013 LXQt team
  * Authors:
  *   Alexander Sokoloff <sokoloff.a@gmail.com>
+     Luís Pereira <luis.artur.pereira@gmail.com>
  *
  * This program or library is free software; you can redistribute it
  * and/or modify it under the terms of the GNU Lesser General Public
@@ -29,13 +30,14 @@
 #define LXQTTRANSLATOR_H
 
 #include <QStringList>
+#include "lxqtglobals.h"
 
 namespace LxQt
 {
 /**
   The Translator class provides internationalization support for application and librarioes.
  **/
-class Translator
+class LXQT_API Translator
 {
 public:
     /**
@@ -54,15 +56,16 @@ public:
       then basename of QCoreApplication::applicationFilePath() is used.
       Returns true if the translation is successfully loaded; otherwise returns false.
     **/
-    static bool translateApplication(const QString &applicationName = "");
+    static bool translateApplication(const QString &applicationName = QString());
 
     /**
       Loads translations for application. If applicationName is not specified,
       then basename of QCoreApplication::applicationFilePath() is used.
       Returns true if the translation is successfully loaded; otherwise returns false.
     **/
-    static bool translateLibrary(const QString &libraryName = "");
+    static bool translateLibrary(const QString &libraryName = QString());
 
+    static bool translatePlugin(const QString &pluginName, const QString& type);
 };
 
 } // namespace LxQt

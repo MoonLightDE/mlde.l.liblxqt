@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright (C) 2012  Alec Moskvin <alecm@gmx.com>
@@ -25,10 +25,10 @@
 #ifndef LXQTCONFIGDIALOG_H
 #define LXQTCONFIGDIALOG_H
 
-#include <lxqtsettings.h>
-
-#include <QtGui/QDialog>
-#include <QtGui/QAbstractButton>
+#include "lxqtsettings.h"
+#include <QDialog>
+#include <QAbstractButton>
+#include "lxqtglobals.h"
 
 namespace Ui {
 class ConfigDialog;
@@ -37,7 +37,7 @@ class ConfigDialog;
 namespace LxQt
 {
 
-class ConfigDialog : public QDialog
+class LXQT_API ConfigDialog : public QDialog
 {
     Q_OBJECT
 

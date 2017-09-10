@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -29,13 +29,15 @@
 #ifndef LXQTPLUGININFO_H
 #define LXQTPLUGININFO_H
 
-#include <qtxdg/xdgdesktopfile.h>
-#include <QtCore/QString>
-#include <QtCore/QList>
+#include <QString>
+#include <QList>
 
-#include <QtCore/QFileInfo>
-#include <QtCore/QtAlgorithms>
-#include <QtCore/QDebug>
+#include <QFileInfo>
+#include <QtAlgorithms>
+#include <QDebug>
+#include "lxqtglobals.h"
+
+#include <XdgDesktopFile>
 
 class QLibrary;
 
@@ -46,18 +48,18 @@ namespace LxQt
 Every plugin needs a .desktop file that describes it. The basename of this file must
 be same as the basename of the plugin library.
 
-razorpanel_clock2.desktop file
+lxqtpanel_clock2.desktop file
 
 [Desktop Entry]
   Type=Service
-  ServiceTypes=RazorPanel/Plugin
+  ServiceTypes=LxQtPanel/Plugin
   Name=Clock
   Comment=Clock and calendar
 
 PluginInfo class gives the interface for reading the values from the plugin .desktop file.
 This is a pure virtual class, you must implement libraryDir(), translationDir(), and instance() methods.
 */
-class PluginInfo: public XdgDesktopFile
+class LXQT_API PluginInfo: public XdgDesktopFile
 {
 public:
     /// Constructs a PluginInfo object for accessing the info stored in the .desktop file.
@@ -87,7 +89,7 @@ public:
 
     /*! Returns a list of PluginInfo objects for the matched files in the directories.
       @param desktopFilesDirs - scanned directories names.
-      @param serviceType - type of the plugin, for example "RazorPanel/Plugin".
+      @param serviceType - type of the plugin, for example "LxQtPanel/Plugin".
       @param nameFilter  - wildcard filter that understands * and ? wildcards.
 
       If the same filename is located under multiple directories only the first file should be used.

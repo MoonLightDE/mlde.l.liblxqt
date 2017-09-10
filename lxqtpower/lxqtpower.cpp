@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -28,8 +28,8 @@
 
 #include "lxqtpower.h"
 #include "lxqtpowerproviders.h"
-#include <QtCore/QtAlgorithms>
-#include <QtCore/QDebug>
+#include <QtAlgorithms>
+#include <QDebug>
 
 using namespace LxQt;
 
@@ -41,7 +41,7 @@ Power::Power(QObject *parent) :
     mProviders.append(new ConsoleKitProvider(this));
     mProviders.append(new SystemdProvider(this));
     mProviders.append(new LxSessionProvider(this));
-    mProviders.append(new RazorProvider(this));
+    mProviders.append(new LxQtProvider(this));
 }
 
 

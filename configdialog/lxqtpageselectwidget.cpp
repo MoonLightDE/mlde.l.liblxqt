@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -27,9 +27,9 @@
 
 
 #include "lxqtpageselectwidget.h"
-#include <QtGui/QStyledItemDelegate>
-#include <QtCore/QDebug>
-#include <QtGui/QScrollBar>
+#include <QDebug>
+#include <QStyledItemDelegate>
+#include <QScrollBar>
 
 using namespace LxQt;
 

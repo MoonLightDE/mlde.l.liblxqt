@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -27,10 +27,10 @@
 
 #include "translatorsinfo.h"
 #include <QDebug>
-#include <QtCore/QSettings>
-#include <QtCore/QStringList>
-#include <QtCore/QTextCodec>
-#include <QtGui/QTextDocument>
+#include <QSettings>
+#include <QStringList>
+#include <QTextCodec>
+#include <QTextDocument>
 
 using namespace LxQt;
 
@@ -411,12 +411,13 @@ TranslatorPerson::TranslatorPerson(const QString &englishName, const QString &na
 
     if (!mContact.isEmpty())
     {
+
         if (mContact.contains(QRegExp("^(https?|mailto):")))
-            mInfo = QString(" <a href='%1'>%2</a>").arg(contact, Qt::escape(mInfo));
+            mInfo = QString(" <a href='%1'>%2</a>").arg(contact, mInfo.toHtmlEscaped());
         else if (contact.contains("@") || contact.contains("<"))
-            mInfo = QString(" <a href='mailto:%1'>%2</a>").arg(contact, Qt::escape(mInfo));
+            mInfo = QString(" <a href='mailto:%1'>%2</a>").arg(contact, mInfo.toHtmlEscaped());
         else
-            mInfo = QString(" <a href='http://%1'>%2</a>").arg(contact, Qt::escape(mInfo));
+            mInfo = QString(" <a href='http://%1'>%2</a>").arg(contact, mInfo.toHtmlEscaped());
     }
 }
 

@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2012 Razor team
@@ -27,8 +27,9 @@
 
 
 #include "technicalinfo.h"
-#include <qtxdg/xdgdirs.h>
 #include "lxqttranslator.h"
+
+#include <XdgDirs>
 
 using namespace LxQt;
 
@@ -155,7 +156,7 @@ TechnicalInfo::TechnicalInfo()
     TechInfoTable *table;
 
     // ******************************************
-    table = newTable("LXDE-Qt Desktop Toolbox - Technical Info<p>");
+    table = newTable("LXQt Desktop Toolbox - Technical Info<p>");
 #ifdef DEBUG
     QString buildType("Debug");
 #else

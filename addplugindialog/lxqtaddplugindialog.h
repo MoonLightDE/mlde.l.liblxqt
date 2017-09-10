@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -31,6 +31,7 @@
 
 #include <QDialog>
 #include <lxqtplugininfo.h>
+#include "lxqtglobals.h"
 
 #define SEARCH_DELAY 125
 
@@ -44,7 +45,7 @@ namespace LxQt
 
 /*! The AddPluginDialog class provides a dialog that allow users to add plugins.
  */
-class AddPluginDialog : public QDialog
+class LXQT_API AddPluginDialog : public QDialog
 {
     Q_OBJECT
 
@@ -52,7 +53,7 @@ public:
     /*! Constructs a dialog with the given parent that initially displays
        PluginInfo objects for the matched files in the directories
       @param desktopFilesDirs - list of the scanned directories names.
-      @param serviceType - type of the plugin, for example "RazorPanel/Plugin".
+      @param serviceType - type of the plugin, for example "LxQtPanel/Plugin".
       @param nameFilter  - wildcard filter that understands * and ? wildcards. */
     AddPluginDialog(const QStringList& desktopFilesDirs,
                     const QString& serviceType,
@@ -61,7 +62,7 @@ public:
 
     ~AddPluginDialog();
 
-    void setPluginsInUse(const PluginInfoList pluginsInUse);
+    void setPluginsInUse(const QStringList pluginsInUseIDs);
 
 signals:
     void pluginSelected(const LxQt::PluginInfo &plugin);
@@ -73,8 +74,14 @@ private:
     void init();
     Ui::AddPluginDialog *ui;
     PluginInfoList mPlugins;
-    PluginInfoList mPluginsInUse;
     int mTimerId;
+
+    // store the amount of instances of the plugins using their ids
+    QHash<QString, int> mPluginsInUseAmount;
+
+public slots:
+    void pluginAdded(const QString &id);
+    void pluginRemoved(const QString &id);
 
 private slots:
     void emitPluginSelected();

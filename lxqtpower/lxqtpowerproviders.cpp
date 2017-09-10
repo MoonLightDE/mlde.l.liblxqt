@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -28,9 +28,9 @@
 
 
 #include "lxqtpowerproviders.h"
-#include <QtDBus/QDBusInterface>
-#include <QtCore/QProcess>
-#include <QtCore/QDebug>
+#include <QDBusInterface>
+#include <QProcess>
+#include <QDebug>
 #include "lxqtnotification.h"
 #include <signal.h> // for kill()
 
@@ -46,9 +46,9 @@
 #define SYSTEMD_PATH            "/org/freedesktop/login1"
 #define SYSTEMD_INTERFACE       "org.freedesktop.login1.Manager"
 
-#define RAZOR_SERVICE      "org.razorqt.session"
-#define RAZOR_PATH         "/RazorSession"
-#define RAZOR_INTERFACE    "org.razorqt.session"
+#define LXQT_SERVICE      "org.lxqt.session"
+#define LXQT_PATH         "/LxQtSession"
+#define LXQT_INTERFACE    "org.lxqt.session"
 
 #define LXSESSION_SERVICE      "org.lxde.SessionManager"
 #define LXSESSION_PATH         "/org/lxde/SessionManager"
@@ -73,7 +73,7 @@ void printDBusMsg(const QDBusMessage &msg)
 /************************************************
  Helper func
  ************************************************/
-bool dbusCall(const QString &service,
+static bool dbusCall(const QString &service,
               const QString &path,
               const QString &interface,
               const QDBusConnection &connection,
@@ -90,7 +90,7 @@ bool dbusCall(const QString &service,
             Notification::notify(
                                     QObject::tr("Power Manager Error"),
                                     QObject::tr("QDBusInterface is invalid")+ "\n\n" + service + " " + path + " " + interface + " " + method,
-                                    "razor-logo.png");
+                                    "lxqt-logo.png");
         }
         return false;
     }
@@ -105,7 +105,7 @@ bool dbusCall(const QString &service,
             Notification::notify(
                                     QObject::tr("Power Manager Error (D-BUS call)"),
                                     msg.errorName() + "\n\n" + msg.errorMessage(),
-                                    "razor-logo.png");
+                                    "lxqt-logo.png");
         }
     }
 
@@ -122,11 +122,12 @@ bool dbusCall(const QString &service,
  returns a string instead of a bool, and it takes
  an "interactivity boolean" as an argument.
  ************************************************/
-bool dbusCallSystemd(const QString &service,
+static bool dbusCallSystemd(const QString &service,
                      const QString &path,
                      const QString &interface,
                      const QDBusConnection &connection,
                      const QString &method,
+                     bool needBoolArg,
                      PowerProvider::DbusErrorCheck errorCheck = PowerProvider::CheckDBUS
                      )
 {
@@ -139,12 +140,12 @@ bool dbusCallSystemd(const QString &service,
             Notification::notify(
                                     QObject::tr("Power Manager Error"),
                                     QObject::tr("QDBusInterface is invalid")+ "\n\n" + service + " " + path + " " + interface + " " + method,
-                                    "razor-logo.png");
+                                    "lxqt-logo.png");
         }
         return false;
     }
 
-    QDBusMessage msg = dbus.call(method, true);
+    QDBusMessage msg = dbus.call(method, needBoolArg ? QVariant(true) : QVariant());
 
     if (!msg.errorName().isEmpty())
     {
@@ -154,7 +155,7 @@ bool dbusCallSystemd(const QString &service,
             Notification::notify(
                                     QObject::tr("Power Manager Error (D-BUS call)"),
                                     msg.errorName() + "\n\n" + msg.errorMessage(),
-                                    "razor-logo.png");
+                                    "lxqt-logo.png");
         }
     }
 
@@ -182,8 +183,8 @@ bool dbusGetProperty(const QString &service,
     if (!dbus.isValid())
     {
         qWarning() << "dbusGetProperty: QDBusInterface is invalid" << service << path << interface << property;
-//        Notification::notify(QObject::tr("Razor Power Manager"),
-//                                  "razor-logo.png",
+//        Notification::notify(QObject::tr("LxQt Power Manager"),
+//                                  "lxqt-logo.png",
 //                                  QObject::tr("Power Manager Error"),
 //                                  QObject::tr("QDBusInterface is invalid")+ "\n\n" + service +" " + path +" " + interface +" " + property);
 
@@ -195,8 +196,8 @@ bool dbusGetProperty(const QString &service,
     if (!msg.errorName().isEmpty())
     {
         printDBusMsg(msg);
-//        Notification::notify(QObject::tr("Razor Power Manager"),
-//                                  "razor-logo.png",
+//        Notification::notify(QObject::tr("LxQt Power Manager"),
+//                                  "lxqt-logo.png",
 //                                  QObject::tr("Power Manager Error (Get Property)"),
 //                                  msg.errorName() + "\n\n" + msg.errorMessage());
     }
@@ -426,6 +427,7 @@ bool SystemdProvider::canAction(Power::Action action) const
                     SYSTEMD_INTERFACE,
                     QDBusConnection::systemBus(),
                     command,
+		    false,
                     // canAction should be always silent because it can freeze
                     // g_main_context_iteration Qt event loop in QMessageBox
                     // on panel startup if there is no DBUS running.
@@ -464,32 +466,33 @@ bool SystemdProvider::doAction(Power::Action action)
              SYSTEMD_PATH,
              SYSTEMD_INTERFACE,
              QDBusConnection::systemBus(),
-             command
+             command,
+	     true
             );
 }
 
 
 /************************************************
-  RazorProvider
+  LxQtProvider
  ************************************************/
-RazorProvider::RazorProvider(QObject *parent):
+LxQtProvider::LxQtProvider(QObject *parent):
     PowerProvider(parent)
 {
 }
 
 
-RazorProvider::~RazorProvider()
+LxQtProvider::~LxQtProvider()
 {
 }
 
 
-bool RazorProvider::canAction(Power::Action action) const
+bool LxQtProvider::canAction(Power::Action action) const
 {
     switch (action)
     {
         case Power::PowerLogout:
             // there can be case when razo-session does not run
-            return dbusCall(RAZOR_SERVICE, RAZOR_PATH, RAZOR_SERVICE,
+            return dbusCall(LXQT_SERVICE, LXQT_PATH, LXQT_SERVICE,
                             QDBusConnection::sessionBus(), "canLogout",
                             PowerProvider::DontCheckDBUS);
         default:
@@ -498,7 +501,7 @@ bool RazorProvider::canAction(Power::Action action) const
 }
 
 
-bool RazorProvider::doAction(Power::Action action)
+bool LxQtProvider::doAction(Power::Action action)
 {
     QString command;
 
@@ -512,9 +515,9 @@ bool RazorProvider::doAction(Power::Action action)
         return false;
     }
 
-    return dbusCall(RAZOR_SERVICE,
-             RAZOR_PATH,
-             RAZOR_INTERFACE,
+    return dbusCall(LXQT_SERVICE,
+             LXQT_PATH,
+             LXQT_INTERFACE,
              QDBusConnection::sessionBus(),
              command
             );

@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2013 Razor team
@@ -29,11 +29,12 @@
 #define LXQTROTATED_WIDGET_H
 
 #include <QWidget>
+#include "lxqtglobals.h"
 
 namespace LxQt
 {
 
-class RotatedWidget: public QWidget
+class LXQT_API RotatedWidget: public QWidget
 {
     Q_OBJECT
 

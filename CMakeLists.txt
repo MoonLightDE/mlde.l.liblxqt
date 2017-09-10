@@ -1,19 +1,22 @@
-cmake_minimum_required( VERSION 2.6 )
+cmake_minimum_required(VERSION 2.8.9)
 
 project(liblxqt)
 
 set(LXQT_MAJOR_VERSION 0)
-set(LXQT_MINOR_VERSION 5)
+set(LXQT_MINOR_VERSION 8)
 set(LXQT_PATCH_VERSION 0)
 
+# Set default installation paths
+set(LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "Installation path for libraries")
+set(LXQT_PKG_CONFIG_DESCRIPTION "Shared library for LXQt applications")
 
 set(PUB_HDRS
     aboutdialog/lxqtaboutdialog.h
+    addplugindialog/lxqtaddplugindialog.h
     lxqtsettings.h
     lxqtxfitman.h
     lxqtplugininfo.h
     lxqtpowermanager.h
-    addplugindialog/lxqtaddplugindialog.h
     lxqtscreensaver.h
     lxqtapplication.h
     lxqttranslator.h
@@ -27,28 +30,29 @@ set(PUB_HDRS
     lxqtautostartentry.h
     lxqtgridlayout.h
     lxqtrotatedwidget.h
+    lxqtglobals.h
 )
 
 set(PUBLIC_CLASSES
-    LxQtAboutDialog
-    LxQtSettings
-    LxQtXfitMan
-    LxQtPluginInfo
-    LxQtPowerManager
-    LxQtAddPluginDialog
-    LxQtScreenSaver
-    LxQtApplication
-    LxQtTranslator
-    LxQtProgramFinder
+    AboutDialog
+    Settings
+    XfitMan
+    PluginInfo
+    PowerManager
+    AddPluginDialog
+    ScreenSaver
+    Application
+    Translator
+    ProgramFinder
 
-    LxQtConfigDialog
-    LxQtPageSelectWidget
+    ConfigDialog
+    PageSelectWidget
 
-    LxQtPower
-    LxQtNotification
-    LxQtAutostartEntry
-    LxQtGridLayout
-    LxQtRotatedWidget
+    Power
+    Notification
+    AutostartEntry
+    GridLayout
+    RotatedWidget
 )
 
 set(PRIV_HDRS
@@ -75,18 +79,18 @@ set(SRCS
 
     lxqtpower/lxqtpower.cpp
     lxqtpower/lxqtpowerproviders.cpp
-    lxqtnotification.cpp
     lxqtautostartentry.cpp
-    translatorsinfo/translatorsinfo.cpp
+    lxqtnotification.cpp
     lxqtgridlayout.cpp
     lxqtrotatedwidget.cpp
+    translatorsinfo/translatorsinfo.cpp
 )
 
 set(MOCS
     aboutdialog/lxqtaboutdialog.h
     aboutdialog/lxqtaboutdialog_p.h
-    lxqtpowermanager.h
     addplugindialog/lxqtaddplugindialog.h
+    lxqtpowermanager.h
     lxqtsettings.h
     lxqtscreensaver.h
     lxqtapplication.h
@@ -104,112 +108,234 @@ set(MOCS
 
 set(FORMS
     aboutdialog/lxqtaboutdialog.ui
-
     configdialog/lxqtconfigdialog.ui
-
     addplugindialog/lxqtaddplugindialog.ui
 )
 
+set(TRANSLATION_TEMPLATE "${CMAKE_CURRENT_SOURCE_DIR}/translations/source.ts")
 file(GLOB TS_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/translations/liblxqt_*.ts
+    "${CMAKE_CURRENT_SOURCE_DIR}/translations/liblxqt_*.ts"
 )
 
 # additional cmake files
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-find_package(Qt4 REQUIRED QUIET)
-include(${QT_USE_FILE})
+option(UPDATE_TRANSLATIONS "Update source translation translations/*.ts files" OFF)
 
-QT4_ADD_DBUS_INTERFACE(SRCS
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+set(CMAKE_AUTOMOC ON)
+find_package(Qt5Widgets REQUIRED QUIET)
+find_package(Qt5DBus REQUIRED QUIET)
+find_package(Qt5X11Extras REQUIRED QUIET)
+find_package(Qt5LinguistTools REQUIRED QUIET)
+find_package(Qt5Xdg REQUIRED)
+message(STATUS "Building with Qt ${Qt5Core_VERSION_STRING}")
+
+QT5_WRAP_UI(UIS ${FORMS})
+if (UPDATE_TRANSLATIONS)
+    qt5_create_translation(QM_FILES ${SRCS} ${FORMS} ${TS_FILES} OPTIONS -locations absolute)
+    qt5_create_translation(TS_SOURCE_FILE
+        ${SRCS} ${FORMS}
+        ${TRANSLATION_TEMPLATE}
+        OPTIONS -locations absolute
+    )
+else()
+    QT5_ADD_TRANSLATION(QM_FILES ${TS_FILES})
+endif()
+QT5_ADD_DBUS_INTERFACE(SRCS
     dbus/org.freedesktop.Notifications.xml
     notifications_interface
 )
 
-find_package(X11 REQUIRED QUIET)
+set(LXQT_QT_VERSION "5")
+set(LXQT_QT_VERSION_SUFFIX "-qt5")
+set(LXQT_PKG_CONFIG_REQUIRES "Qt5Widgets Qt5Xml Qt5DBus Qt5X11Extras")
 
-find_package(QTXDG REQUIRED QUIET)
 include(${QTXDG_USE_FILE})
 
+find_package(X11 REQUIRED QUIET)
 
-include_directories (
-    ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-    ${QT_QTCORE_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR} ${QT_QTDBUS_INCLUDE_DIR}
-    ${X11_INCLUDE_DIR}
-    ${QTXDG_INCLUDE_DIRS}
+include_directories(
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "${X11_INCLUDE_DIR}"
+    "${QTXDG_INCLUDE_DIRS}"
 )
 
+# Standard directories for installation
+include(GNUInstallDirs)
+
 set(LXQT_VERSION ${LXQT_MAJOR_VERSION}.${LXQT_MINOR_VERSION}.${LXQT_PATCH_VERSION})
+set(LXQT_LIBRARY_NAME "lxqt${LXQT_QT_VERSION_SUFFIX}")
+set(LXQT_RELATIVE_SHARE_DIR "${LXQT_LIBRARY_NAME}")
+set(LXQT_SHARE_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${LXQT_RELATIVE_SHARE_DIR}")
+set(LXQT_RELATIVE_TRANSLATIONS_DIR "${LXQT_LIBRARY_NAME}/translations")
+set(LXQT_TRANSLATIONS_DIR "${LXQT_SHARE_DIR}/translations")
+
+set(LXQT_INTREE_INCLUDE_DIR "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/include")
+set(LXQT_INTREE_TARGETS_FILE "${CMAKE_BINARY_DIR}/${LXQT_LIBRARY_NAME}-targets.cmake")
+
+set(LXQT_INSTALL_INCLUDE_DIR "${CMAKE_INSTALL_FULL_INCLUDEDIR}/${LXQT_LIBRARY_NAME}")
+set(LXQT_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/share/cmake")
+
+include(cmake/FindInstallConfigPath.cmake)
+include(create_portable_headers)
 
 message(STATUS "")
 message(STATUS "liblxqt version: ${LXQT_VERSION}")
 message(STATUS "")
 
 
-#************************************************
-# Build config.cmake files
-#************************************************
-set(LXQT_SHARE_DIR ${CMAKE_INSTALL_PREFIX}/share/lxqt)
-set(LXQT_TRANSLATIONS_DIR ${LXQT_SHARE_DIR}/translations)
-include(cmake/FindInstallConfigPath.cmake)
+# Copy public headers
+foreach(h ${PUB_HDRS})
+    get_filename_component(bh ${h} NAME)
+    configure_file(${h} "${LXQT_INTREE_INCLUDE_DIR}/LXQt/${bh}" COPYONLY)
+endforeach()
 
-set(LXQT_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/lxqt)
+# Create the portable headers
+create_portable_headers(INTREE_PORTABLE_HEADERS ${LXQT_INTREE_INCLUDE_DIR}/LXQt ${PUBLIC_CLASSES})
+check_portable_headers(H_FILES ${PUB_HDRS} LINKS ${INTREE_PORTABLE_HEADERS})
+
+#************************************************
+# Create in-tree build infrastructure
+#************************************************
+set(CFG_LXQT_INCLUDE_DIR    ${LXQT_INTREE_INCLUDE_DIR})
+set(CFG_LXQT_LIBRARY        ${LXQT_LIBRARY_NAME})
+set(CFG_LXQT_USE_FILE       ${CMAKE_BINARY_DIR}/${LXQT_LIBRARY_NAME}_use.cmake)
+set(CFG_LXQT_TARGETS_FILE   ${LXQT_INTREE_TARGETS_FILE})
+set(CFG_LXQT_CMAKE_MODULES_DIR "${PROJECT_SOURCE_DIR}/cmake/modules")
+
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/lxqt-config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/lxqt-config.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/lxqtX-config.cmake.in
+    ${CMAKE_BINARY_DIR}/${LXQT_LIBRARY_NAME}-config.cmake
     @ONLY
 )
+
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/lxqt_use.cmake.in
+    ${CMAKE_BINARY_DIR}/${LXQT_LIBRARY_NAME}_use.cmake
+    @ONLY
+)
+
+include(${CFG_LXQT_USE_FILE})
+
+
 #************************************************
-# End of build config.cmake
+# Create installable build infrastructure
 #************************************************
-include_directories(${LXQT_INCLUDE_DIR})
+set(CFG_LXQT_INCLUDE_DIR "${LXQT_INSTALL_INCLUDE_DIR}")
+set(CFG_LXQT_LIBRARY ${LXQT_LIBRARY_NAME})
+set(CFG_LXQT_USE_FILE "${LXQT_INSTALL_CMAKE_DIR}/${LXQT_LIBRARY_NAME}/${LXQT_LIBRARY_NAME}_use.cmake")
+set(CFG_LXQT_TARGETS_FILE "${LXQT_INSTALL_CMAKE_DIR}/${LXQT_LIBRARY_NAME}/${LXQT_LIBRARY_NAME}-targets.cmake")
+set(CFG_LXQT_CMAKE_MODULES_DIR "${LXQT_INSTALL_CMAKE_DIR}/${LXQT_LIBRARY_NAME}/modules")
 
-set(APP_SHARE_DIR ${CMAKE_INSTALL_PREFIX}/share/liblxqt)
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/lxqtX-config.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/install/${LXQT_LIBRARY_NAME}-config.cmake"
+    @ONLY
+)
+
+# use gcc visibility feature to decrease unnecessary exported symbols
+if (CMAKE_COMPILER_IS_GNUCXX)
+    # set visibility to hidden to hide symbols, unlesss they're exported
+    # manually in the code
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden -fno-exceptions -Wl,-no-undefined -Wall")
+endif()
+add_definitions(-DCOMPILE_LIBLXQT)
 
 
-# create the portable headers *******************
-include(create_portable_headers)
-create_portable_headers(PORTABLE_HEADERS ${PUBLIC_CLASSES})
-check_portable_headers("${PUB_HDRS}")
-#************************************************
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/lxqt_use.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/install/${LXQT_LIBRARY_NAME}_use.cmake
+    @ONLY
+)
 
-qt4_wrap_cpp(MOCS ${MOCS})
-qt4_wrap_ui(UIS ${FORMS})
-qt4_add_translation(QM_FILES ${TS_FILES})
-include(cmake/lxqt_use.cmake)
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/install/${LXQT_LIBRARY_NAME}-config.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/install/${LXQT_LIBRARY_NAME}_use.cmake
+    DESTINATION ${LXQT_INSTALL_CMAKE_DIR}/${LXQT_LIBRARY_NAME}
+    COMPONENT Devel
+)
+
+install(EXPORT
+    ${LXQT_LIBRARY_NAME}-targets
+    DESTINATION ${LXQT_INSTALL_CMAKE_DIR}/${LXQT_LIBRARY_NAME}
+    COMPONENT Devel
+)
+
+file(GLOB toInstallModules
+    "${PROJECT_SOURCE_DIR}/cmake/modules/*.cmake"
+    "${PROJECT_SOURCE_DIR}/cmake/modules/*.in"
+)
+
+install(
+    FILES ${toInstallModules}
+    DESTINATION  "${LXQT_INSTALL_CMAKE_DIR}/${LXQT_LIBRARY_NAME}/modules"
+    COMPONENT Devel
+)
 
 
 include(translatorsinfo/CMakeLists.txt)
 get_translatorsinfo_qrc(translatorsinfo_qrc)
-qt4_add_resources(QRC_CXX_SOURCES ${translatorsinfo_qrc})
+qt5_add_resources(QRC_CXX_SOURCES ${translatorsinfo_qrc})
 
-add_library(lxqt
+add_library(${LXQT_LIBRARY_NAME}
     SHARED ${PUB_HDRS}
            ${PRIV_HDRS}
            ${SRCS}
            ${dbus_generated}
            ${UIS} ${MOCS}
            ${QM_FILES}
-           ${QRC_CXX_SOURCES})
+           ${TS_SOURCE_FILE}
+           ${QRC_CXX_SOURCES}
 
-target_link_libraries(lxqt
-    ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY}
-    ${QT_QTDBUS_LIBRARY}
+)
+
+qt5_use_modules(${LXQT_LIBRARY_NAME} Widgets DBus X11Extras)
+target_link_libraries(${LXQT_LIBRARY_NAME}
     ${X11_X11_LIB}
     ${QTXDG_LIBRARIES}
 )
 
-set_target_properties(lxqt PROPERTIES
+set_target_properties(${LXQT_LIBRARY_NAME} PROPERTIES
     VERSION   ${LXQT_VERSION}
     SOVERSION ${LXQT_MAJOR_VERSION}
 )
 
-install(TARGETS lxqt DESTINATION lib${LIB_SUFFIX})
-install(FILES ${PUB_HDRS}  DESTINATION ${LXQT_INCLUDE_DIR})
-install(FILES ${PORTABLE_HEADERS} DESTINATION ${LXQT_INCLUDE_DIR})
-install(FILES ${QM_FILES} DESTINATION ${LXQT_TRANSLATIONS_DIR})
+install(TARGETS
+    ${LXQT_LIBRARY_NAME}
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    EXPORT ${LXQT_LIBRARY_NAME}-targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
+)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/lxqt-config.cmake DESTINATION share/cmake/lxqt)
-install(FILES cmake/lxqt_use.cmake DESTINATION share/cmake/lxqt)
 
-include(cmake/create_pkgconfig_file.cmake)
-create_pkgconfig_file(lxqt "Shared library for LXQt applications")
+export(TARGETS ${LXQT_LIBRARY_NAME} ${QTXDG_TARGET} FILE ${LXQT_INTREE_TARGETS_FILE})
+
+install(FILES ${PUB_HDRS} DESTINATION "${LXQT_INSTALL_INCLUDE_DIR}/LXQt")
+install(FILES ${INTREE_PORTABLE_HEADERS} DESTINATION "${LXQT_INSTALL_INCLUDE_DIR}/LXQt")
+install(FILES ${QM_FILES} DESTINATION "${LXQT_TRANSLATIONS_DIR}/liblxqt")
+
+#************************************************
+# Create pkgconfig file
+#************************************************
+lxqt_create_pkgconfig_file(${LXQT_LIBRARY_NAME}
+    ${LXQT_PKG_CONFIG_DESCRIPTION}
+    ${LXQT_PKG_CONFIG_REQUIRES}
+    ${LXQT_LIBRARY_NAME}
+    ${LXQT_VERSION}
+)
+#************************************************
+
+
+# building tarball with CPack -------------------------------------------------
+include(InstallRequiredSystemLibraries)
+set(CPACK_PACKAGE_VERSION_MAJOR ${LXQT_MAJOR_VERSION})
+set(CPACK_PACKAGE_VERSION_MINOR ${LXQT_MINOR_VERSION})
+set(CPACK_PACKAGE_VERSION_PATCH ${LXQT_PATCH_VERSION})
+set(CPACK_GENERATOR TBZ2)
+set(CPACK_SOURCE_GENERATOR TBZ2)
+set(CPACK_SOURCE_IGNORE_FILES /build/;.gitignore;.*~;.git;.kdev4;temp)
+include(CPack)

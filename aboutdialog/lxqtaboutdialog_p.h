@@ -1,7 +1,7 @@
 /* BEGIN_COMMON_COPYRIGHT_HEADER
  * (c)LGPL2+
  *
- * Razor - a lightweight, Qt based, desktop toolset
+ * LXQt - a lightweight, Qt based, desktop toolset
  * http://razor-qt.org
  *
  * Copyright: 2010-2011 Razor team
@@ -28,8 +28,8 @@
 #ifndef LXQT_ABOUTDIALOG_P_H
 #define LXQT_ABOUTDIALOG_P_H
 
-#include <QtGui/QDialog>
 #include "ui_lxqtaboutdialog.h"
+#include <QDialog>
 
 namespace LxQt
 {
