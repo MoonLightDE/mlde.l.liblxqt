@@ -48,20 +48,11 @@ add_definitions(-DLXQT_VERSION=\"${LXQT_VERSION}\")
 SET_SOURCE_FILES_PROPERTIES(LXQT_LIBRARIES PROPERTIES OBJECT_DEPENDS lxqt${LXQT_QT_VERSION})
 
 
-if (LXQT_QT_VERSION EQUAL "4")
-    find_package(Qt4 REQUIRED QUIET)
-    include(${QT_USE_FILE})
-
-    find_package(QTXDG REQUIRED)
-elseif(LXQT_QT_VERSION EQUAL "5")
-    find_package(Qt5Widgets REQUIRED QUIET)
-    find_package(Qt5DBus REQUIRED QUIET)
-    find_package(Qt5X11Extras REQUIRED QUIET)
-    find_package(Qt5LinguistTools REQUIRED QUIET)
-    find_package(Qt5Xdg REQUIRED)
-else()
-    message(FATAL "Qt${LXQT_QT_VERSION} is not supported.")
-endif()
+find_package(Qt5Widgets REQUIRED QUIET)
+find_package(Qt5DBus REQUIRED QUIET)
+find_package(Qt5X11Extras REQUIRED QUIET)
+find_package(Qt5LinguistTools REQUIRED QUIET)
+find_package(Qt5Xdg REQUIRED)
 
 list(APPEND CMAKE_MODULE_PATH ${LXQT_CMAKE_MODULES_DIR})
 

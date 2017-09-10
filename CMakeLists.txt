@@ -147,7 +147,6 @@ set(LXQT_QT_VERSION "5")
 set(LXQT_QT_VERSION_SUFFIX "-qt5")
 set(LXQT_PKG_CONFIG_REQUIRES "Qt5Xdg Qt5Widgets Qt5Xml Qt5DBus Qt5X11Extras")
 
-
 # Standard directories for installation
 include(GNUInstallDirs)
 
@@ -180,9 +179,7 @@ lxqt_translate_ts(QM_FILES
         ${LXQT_TRANSLATIONS_DIR}/${PROJECT_NAME}
 )
 
-message(STATUS "")
 message(STATUS "liblxqt version: ${LXQT_VERSION}")
-message(STATUS "")
 
 
 # Copy public headers
