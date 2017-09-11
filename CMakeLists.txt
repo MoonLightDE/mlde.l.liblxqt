@@ -313,6 +313,7 @@ add_library(${LXQT_LIBRARY_NAME}
 )
 
 target_link_libraries(${LXQT_LIBRARY_NAME}
+    PUBLIC
     Qt5::Widgets
     Qt5::DBus
     Qt5::X11Extras
