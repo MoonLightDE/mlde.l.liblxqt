@@ -161,6 +161,17 @@ set(LXQT_PKG_CONFIG_REQUIRES "Qt5Xdg Qt5Widgets Qt5Xml Qt5DBus Qt5X11Extras")
 # Standard directories for installation
 include(GNUInstallDirs)
 
+#-----------------------------------------------------------------------------
+# LXQT_DATA_DIR defaults to CMAKE_INSTALL_FULL_DATADIR. It's added to
+#   XDG_DATA_DIRS by the startlxqt script
+# Warning: Setting LXQT_DATA_DIR must be done after including GNUInstallDirs
+#-----------------------------------------------------------------------------
+if (NOT DEFINED LXQT_DATA_DIR)
+    set(LXQT_DATA_DIR "${CMAKE_INSTALL_FULL_DATADIR}" CACHE PATH
+        "LXQt base directory relative to which data files should be searched"
+    )
+endif()
+
 set(LXQT_VERSION ${LXQT_MAJOR_VERSION}.${LXQT_MINOR_VERSION}.${LXQT_PATCH_VERSION})
 set(LXQT_LIBRARY_NAME "lxqt${LXQT_QT_VERSION_SUFFIX}")
 set(LXQT_RELATIVE_SHARE_DIR "${LXQT_LIBRARY_NAME}")
